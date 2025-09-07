@@ -1,0 +1,296 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Play, Pause, RotateCcw, Cpu, Network, Brain, Zap } from 'lucide-react';
+
+const UniverseSimulator = () => {
+  const [universes, setUniverses] = useState([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const [currentTask, setCurrentTask] = useState('');
+  const [totalComputePower, setTotalComputePower] = useState(0);
+  const [networkEfficiency, setNetworkEfficiency] = useState(0);
+  const [consciousnessNodes, setConsciousnessNodes] = useState(0);
+  const [taskQueue, setTaskQueue] = useState([]);
+
+  // Initialize universes
+  useEffect(() => {
+    const initUniverses = Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      name: `Universe-${String.fromCharCode(65 + i)}`,
+      computePower: Math.floor(Math.random() * 100) + 20,
+      consciousnessLevel: Math.floor(Math.random() * 10) + 1,
+      status: Math.random() > 0.3 ? 'online' : 'offline',
+      dimension: i % 4,
+      activeTask: null,
+      efficiency: Math.random() * 0.8 + 0.2,
+      dataTransfer: 0
+    }));
+    setUniverses(initUniverses);
+  }, []);
+
+  // Calculate network stats
+  useEffect(() => {
+    const onlineUniverses = universes.filter(u => u.status === 'online');
+    const totalPower = onlineUniverses.reduce((sum, u) => sum + u.computePower, 0);
+    const avgEfficiency = onlineUniverses.length > 0 
+      ? onlineUniverses.reduce((sum, u) => sum + u.efficiency, 0) / onlineUniverses.length 
+      : 0;
+    const totalNodes = onlineUniverses.reduce((sum, u) => sum + u.consciousnessLevel, 0);
+    
+    setTotalComputePower(totalPower);
+    setNetworkEfficiency(avgEfficiency);
+    setConsciousnessNodes(totalNodes);
+  }, [universes]);
+
+  const simulationTasks = [
+    'Training Multi-Dimensional AI Model',
+    'Processing Consciousness Pattern Recognition',
+    'Quantum Entanglement Communication',
+    'Parallel Reality Data Mining',
+    'Inter-Dimensional Resource Optimization',
+    'Cosmic Pattern Analysis',
+    'Alternative Timeline Computation',
+    'Universal Constant Calibration'
+  ];
+
+  // Start simulation
+  const startSimulation = () => {
+    setIsRunning(true);
+    if (taskQueue.length === 0) {
+      const newTask = simulationTasks[Math.floor(Math.random() * simulationTasks.length)];
+      setCurrentTask(newTask);
+      setTaskQueue([newTask]);
+    }
+  };
+
+  // Simulation update loop
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const interval = setInterval(() => {
+      setUniverses(prev => prev.map(universe => {
+        // Random status changes
+        const statusChange = Math.random() < 0.02;
+        let newStatus = universe.status;
+        if (statusChange) {
+          newStatus = universe.status === 'online' ? 'offline' : 'online';
+        }
+
+        // Simulate data transfer
+        const dataTransfer = universe.status === 'online' && universe.activeTask 
+          ? Math.random() * 50 + 10 
+          : 0;
+
+        // Assign tasks to available universes
+        let activeTask = universe.activeTask;
+        if (universe.status === 'online' && !activeTask && taskQueue.length > 0) {
+          activeTask = currentTask;
+        }
+
+        return {
+          ...universe,
+          status: newStatus,
+          dataTransfer,
+          activeTask,
+          efficiency: Math.max(0.1, universe.efficiency + (Math.random() - 0.5) * 0.1)
+        };
+      }));
+
+      // Generate new tasks periodically
+      if (Math.random() < 0.1) {
+        const newTask = simulationTasks[Math.floor(Math.random() * simulationTasks.length)];
+        setCurrentTask(newTask);
+        setTaskQueue(prev => [...prev.slice(-2), newTask]);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [isRunning, currentTask, taskQueue]);
+
+  const resetSimulation = () => {
+    setIsRunning(false);
+    setCurrentTask('');
+    setTaskQueue([]);
+    setUniverses(prev => prev.map(u => ({ ...u, activeTask: null, dataTransfer: 0 })));
+  };
+
+  const getUniverseColor = (universe) => {
+    if (universe.status === 'offline') return 'bg-gray-300';
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500'];
+    return colors[universe.dimension];
+  };
+
+  const getUniverseGlow = (universe) => {
+    if (universe.status === 'offline') return '';
+    if (universe.activeTask) return 'shadow-lg shadow-yellow-400/50 animate-pulse';
+    return 'shadow-md';
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+            Quantum Horizon Dynamics
+          </h1>
+          <p className="text-xl text-gray-300">Multi-Universe Computational Network Prototype</p>
+        </div>
+
+        {/* Control Panel */}
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 mb-6 border border-gray-600">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex gap-4">
+              <button
+                onClick={isRunning ? () => setIsRunning(false) : startSimulation}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+                  isRunning 
+                    ? 'bg-red-600 hover:bg-red-700' 
+                    : 'bg-green-600 hover:bg-green-700'
+                }`}
+              >
+                {isRunning ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                {isRunning ? 'Pause Network' : 'Initialize Network'}
+              </button>
+              
+              <button
+                onClick={resetSimulation}
+                className="flex items-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-medium transition-all"
+              >
+                <RotateCcw className="w-5 h-5" />
+                Reset
+              </button>
+            </div>
+
+            {/* Network Stats */}
+            <div className="flex gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-blue-400" />
+                <span>{totalComputePower.toLocaleString()} TFlops</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Network className="w-5 h-5 text-green-400" />
+                <span>{(networkEfficiency * 100).toFixed(1)}% Efficiency</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-400" />
+                <span>{consciousnessNodes} Consciousness Nodes</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Task */}
+          {currentTask && (
+            <div className="mt-4 p-4 bg-gray-700/50 rounded-lg border-l-4 border-yellow-400">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                <span className="font-medium">Active Network Task:</span>
+              </div>
+              <p className="text-gray-300 mt-1">{currentTask}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Universe Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+          {universes.map(universe => (
+            <div
+              key={universe.id}
+              className={`${getUniverseColor(universe)} ${getUniverseGlow(universe)} rounded-lg p-4 transition-all duration-500`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-white">{universe.name}</h3>
+                <div className={`w-3 h-3 rounded-full ${
+                  universe.status === 'online' ? 'bg-green-400 animate-pulse' : 'bg-red-400'
+                }`} />
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Compute Power:</span>
+                  <span className="font-mono">{universe.computePower} TFlops</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Consciousness Level:</span>
+                  <span className="font-mono">{universe.consciousnessLevel}/10</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Dimension:</span>
+                  <span className="font-mono">{universe.dimension + 1}D</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Efficiency:</span>
+                  <span className="font-mono">{(universe.efficiency * 100).toFixed(1)}%</span>
+                </div>
+                
+                {universe.dataTransfer > 0 && (
+                  <div className="mt-2 pt-2 border-t border-white/20">
+                    <div className="flex justify-between text-xs">
+                      <span>Data Transfer:</span>
+                      <span className="font-mono text-green-300">
+                        {universe.dataTransfer.toFixed(1)} GB/s
+                      </span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-1 mt-1">
+                      <div 
+                        className="bg-green-400 h-1 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(universe.dataTransfer * 2, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {universe.activeTask && (
+                  <div className="mt-2 pt-2 border-t border-white/20">
+                    <div className="text-xs text-yellow-300 font-medium">
+                      Processing Task...
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Task Queue */}
+        {taskQueue.length > 0 && (
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-600">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Network className="w-5 h-5" />
+              Network Task Queue
+            </h3>
+            <div className="space-y-2">
+              {taskQueue.map((task, index) => (
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg ${
+                    index === taskQueue.length - 1
+                      ? 'bg-yellow-600/20 border border-yellow-600/50'
+                      : 'bg-gray-700/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>{task}</span>
+                    <span className="text-sm text-gray-400">
+                      {index === taskQueue.length - 1 ? 'Current' : 'Completed'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="text-center mt-8 text-gray-400">
+          <p className="text-sm">
+            Prototype demonstrating distributed computing across parallel universe networks
+          </p>
+          <p className="text-xs mt-1">
+            Simulating quantum consciousness transfer protocols and inter-dimensional data routing
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UniverseSimulator;
