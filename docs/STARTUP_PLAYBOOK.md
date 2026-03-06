@@ -108,6 +108,15 @@ git push -u origin main
 3. **Triage:** Weekly backlog review; tag feedback (bug, feature, content, other); map to ROADMAP and next sprint.
 4. **Communicate back:** Email or in-app note when a requested feature ships (“You asked for X; it’s live.”).
 
+**Supabase setup (recommended):**
+
+- Apply `supabase/schema.sql` in Supabase SQL editor.
+- Add env vars in Vercel:
+  - `SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY` (server-side only)
+  - `BU_ADMIN_TOKEN` (protects `/admin/feedback` API)
+- Use `/admin/feedback` to review and tag submissions.
+
 **Where to start:**
 
 - Web first (this repo): desktop dashboard, sharing, future API. Add mobile or API when a use case demands it.

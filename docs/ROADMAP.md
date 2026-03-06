@@ -14,7 +14,7 @@ Aligned with the pitch framework. Use this to prioritize and to communicate with
 | Signal feed (3–5 systems) | 🔲 | Connect real data: macro, supply chain, energy, tech, policy |
 | AI cross-system anomalies | 🔲 | LLM layer to surface intersections from raw signals |
 | Auth (optional for freemium) | 🔲 | Clerk or NextAuth; optional sign-up to save views |
-| Feedback → product backlog | 🔲 | Persist feedback to DB/CRM and triage weekly |
+| Feedback → product backlog | ✅ In repo | Supabase schema + feedback persistence + admin inbox |
 | Design partner outreach | 🔲 | 5–10 teams; weekly check-ins |
 
 **Success:** 50+ weekly active users, 10+ feedback items triaged, 2–3 design partners committed.
