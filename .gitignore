@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build
+.next
+out
+build
+dist
+
+# Env and secrets
+.env
+.env.local
+.env.*.local
+
+# IDE and OS
+.idea
+.vscode
+*.swp
+.DS_Store
+
+# Debug and logs
+npm-debug.log*
+*.log
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
