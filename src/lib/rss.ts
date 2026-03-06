@@ -21,7 +21,11 @@ function pickTag(xml: string, tag: string) {
 }
 
 function stripCdata(s: string) {
-  return s.replace(/^<!\\[CDATA\\[([\\s\\S]*)\\]\\]>$/i, '$1').trim();
+  const trimmed = s.trim();
+  if (trimmed.startsWith('<![CDATA[') && trimmed.endsWith(']]>')) {
+    return trimmed.slice('<![CDATA['.length, -3).trim();
+  }
+  return trimmed;
 }
 
 export function parseRss(xml: string): RssItem[] {
