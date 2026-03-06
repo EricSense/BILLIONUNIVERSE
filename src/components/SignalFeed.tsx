@@ -1,48 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SignalCard } from './SignalCard';
 import type { Signal } from '@/types/signal';
 
-// Placeholder data — replace with API / DB
-const MOCK_SIGNALS: Signal[] = [
-  {
-    id: '1',
-    title: 'Energy–supply chain intersection',
-    systems: ['Energy', 'Supply Chain', 'Macro'],
-    summary:
-      'European gas storage drawdown and Red Sea routing shifts are both stressing Q1 logistics costs. AI cross-check flags second-order pressure on chemical and auto inputs.',
-    severity: 'high',
-    timestamp: new Date().toISOString(),
-    sourceHint: 'Macro + trade flow signals',
-  },
-  {
-    id: '2',
-    title: 'Regulatory–tech cascade',
-    systems: ['Policy', 'Technology', 'Finance'],
-    summary:
-      'Draft AI regulation in two major markets correlates with pullback in disclosed AI capex. Possible leading indicator for Q2 earnings narrative.',
-    severity: 'medium',
-    timestamp: new Date(Date.now() - 86400000).toISOString(),
-    sourceHint: 'Policy + earnings transcripts',
-  },
-  {
-    id: '3',
-    title: 'Macro–political signal',
-    systems: ['Macro', 'Political', 'Energy'],
-    summary:
-      'Election calendar in key energy-producing regions aligns with OPEC+ meeting schedule. Historical pattern suggests volatility window in oil forwards.',
-    severity: 'medium',
-    timestamp: new Date(Date.now() - 172800000).toISOString(),
-    sourceHint: 'Elections + commodity data',
-  },
-];
+type LoadState = 'idle' | 'loading' | 'loaded' | 'error';
 
 export function SignalFeed() {
   const [filter, setFilter] = useState<string | null>(null);
-  const systems = Array.from(
-    new Set(MOCK_SIGNALS.flatMap((s) => s.systems))
-  ).sort();
+  const [state, setState] = useState<LoadState>('idle');
+  const [signals, setSignals] = useState<Signal[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setState('loading');
+      setError(null);
+      try {
+        const res = await fetch('/api/signals', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as Signal[];
+        if (cancelled) return;
+        setSignals(data);
+        setState('loaded');
+      } catch (e) {
+        if (cancelled) return;
+        setState('error');
+        setError(e instanceof Error ? e.message : 'Failed to load');
+      }
+    }
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const systems = useMemo(
+    () => Array.from(new Set(signals.flatMap((s) => s.systems))).sort(),
+    [signals]
+  );
+
+  const visible = useMemo(
+    () => (filter ? signals.filter((s) => s.systems.includes(filter)) : signals),
+    [signals, filter]
+  );
 
   return (
     <div className="space-y-6">
@@ -73,11 +75,19 @@ export function SignalFeed() {
         ))}
       </div>
 
+      {state === 'loading' && (
+        <div className="rounded-lg border border-universe-border bg-universe-dark p-4 text-sm text-zinc-400">
+          Loading live signals…
+        </div>
+      )}
+      {state === 'error' && (
+        <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-300">
+          Failed to load signals: {error}
+        </div>
+      )}
+
       <ul className="space-y-4">
-        {(filter
-          ? MOCK_SIGNALS.filter((s) => s.systems.includes(filter))
-          : MOCK_SIGNALS
-        ).map((signal) => (
+        {visible.map((signal) => (
           <li key={signal.id}>
             <SignalCard signal={signal} />
           </li>
