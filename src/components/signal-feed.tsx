@@ -7,7 +7,8 @@ import { SystemPill } from "@/components/ui/system-pill";
 import { SYSTEMS } from "@/lib/data/systems";
 import type { Signal, Severity, SystemId } from "@/lib/types";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 function formatTime(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -19,9 +20,28 @@ function formatTime(iso: string) {
 }
 
 export function SignalFeed({ initialSignals }: { initialSignals: Signal[] }) {
-  const [signals] = useState(initialSignals);
+  const searchParams = useSearchParams();
+  const systemFromUrl = searchParams.get("system") as SystemId | null;
+
+  const [signals, setSignals] = useState(initialSignals);
   const [selectedId, setSelectedId] = useState<string | null>(initialSignals[0]?.id ?? null);
-  const [systemFilter, setSystemFilter] = useState<SystemId | "all">("all");
+  const [systemFilter, setSystemFilter] = useState<SystemId | "all">(
+    systemFromUrl && SYSTEMS.some((s) => s.id === systemFromUrl) ? systemFromUrl : "all"
+  );
+
+  useEffect(() => {
+    setSignals(initialSignals);
+    setSelectedId((prev) => {
+      if (prev && initialSignals.some((s) => s.id === prev)) return prev;
+      return initialSignals[0]?.id ?? null;
+    });
+  }, [initialSignals]);
+
+  useEffect(() => {
+    if (systemFromUrl && SYSTEMS.some((s) => s.id === systemFromUrl)) {
+      setSystemFilter(systemFromUrl);
+    }
+  }, [systemFromUrl]);
   const [severityFilter, setSeverityFilter] = useState<Severity | "all">("all");
   const [anomaliesOnly, setAnomaliesOnly] = useState(false);
   const [query, setQuery] = useState("");

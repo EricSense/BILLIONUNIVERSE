@@ -64,3 +64,43 @@ export interface SignalFilters {
   anomaliesOnly?: boolean;
   query?: string;
 }
+
+export interface Watchlist {
+  id: string;
+  name: string;
+  systemIds: SystemId[];
+  minSeverity: Severity;
+  anomaliesOnly: boolean;
+  keywords: string[];
+  createdAt: string;
+}
+
+export interface Alert {
+  id: string;
+  watchlistId: string;
+  watchlistName: string;
+  signalId: string;
+  signalTitle: string;
+  severity: Severity;
+  createdAt: string;
+  read: boolean;
+}
+
+export interface SavedScenario {
+  id: string;
+  name: string;
+  result: ScenarioResult;
+  savedAt: string;
+}
+
+export type SourceStatus = "live" | "degraded" | "offline" | "pending";
+
+export interface DataSource {
+  id: string;
+  name: string;
+  systemIds: SystemId[];
+  status: SourceStatus;
+  lastSync: string;
+  latencyMs: number;
+  coverage: string;
+}

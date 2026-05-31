@@ -1,6 +1,7 @@
+import { AppShell } from "@/components/app-shell";
+import { WorkspaceProvider } from "@/components/providers/workspace-provider";
 import type { Metadata } from "next";
 import { DM_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
-import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -32,7 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${instrument.variable} ${jetbrains.variable}`}>
       <body>
-        <AppShell>{children}</AppShell>
+        <WorkspaceProvider>
+          <AppShell>{children}</AppShell>
+        </WorkspaceProvider>
       </body>
     </html>
   );

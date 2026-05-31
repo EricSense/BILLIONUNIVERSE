@@ -1,4 +1,5 @@
 import type { Signal, SignalFilters } from "@/lib/types";
+import { filterSignalsFromList, getAllSignals } from "@/lib/data/live-signals";
 
 export const SIGNALS: Signal[] = [
   {
@@ -202,51 +203,33 @@ export const SIGNALS: Signal[] = [
 ];
 
 export function getSignal(id: string): Signal | undefined {
-  return SIGNALS.find((s) => s.id === id);
+  return getAllSignals().find((s) => s.id === id);
 }
 
 export function filterSignals(filters: SignalFilters): Signal[] {
-  let results = [...SIGNALS];
-
-  if (filters.systemId && filters.systemId !== "all") {
-    const systemId = filters.systemId;
-    results = results.filter((s) => s.systems.includes(systemId));
-  }
-
-  if (filters.severity && filters.severity !== "all") {
-    results = results.filter((s) => s.severity === filters.severity);
-  }
-
-  if (filters.anomaliesOnly) {
-    results = results.filter((s) => s.anomaly);
-  }
-
-  if (filters.query?.trim()) {
-    const q = filters.query.toLowerCase();
-    results = results.filter(
-      (s) =>
-        s.title.toLowerCase().includes(q) ||
-        s.summary.toLowerCase().includes(q) ||
-        s.intersection.toLowerCase().includes(q)
-    );
-  }
-
-  return results.sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
+  return filterSignalsFromList(getAllSignals(), {
+    systemId: filters.systemId,
+    severity: filters.severity,
+    anomaliesOnly: filters.anomaliesOnly,
+    query: filters.query,
+  });
 }
 
 export function getSignalStats() {
-  const anomalies = SIGNALS.filter((s) => s.anomaly).length;
-  const critical = SIGNALS.filter((s) => s.severity === "critical").length;
+  const all = getAllSignals();
+  const anomalies = all.filter((s) => s.anomaly).length;
+  const critical = all.filter((s) => s.severity === "critical").length;
   const avgConfidence = Math.round(
-    SIGNALS.reduce((sum, s) => sum + s.confidence, 0) / SIGNALS.length
+    all.reduce((sum, s) => sum + s.confidence, 0) / all.length
   );
+  const liveCount = all.filter((s) => s.id.startsWith("live-")).length;
   return {
-    total: SIGNALS.length,
+    total: all.length,
     anomalies,
     critical,
     avgConfidence,
     systemsMonitored: 5,
+    liveCount,
+    lastRefresh: new Date().toISOString(),
   };
 }

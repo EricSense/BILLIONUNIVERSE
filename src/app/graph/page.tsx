@@ -1,4 +1,4 @@
-import { SystemGraph } from "@/components/system-graph";
+import { InteractiveGraphView } from "@/components/interactive-graph-view";
 import { SYSTEM_LINKS, SYSTEMS } from "@/lib/data/systems";
 
 export default function GraphPage() {
@@ -16,7 +16,7 @@ export default function GraphPage() {
       </header>
 
       <div className="overflow-hidden rounded-xl border border-white/10 bg-surface-card">
-        <SystemGraph width={900} height={480} />
+        <InteractiveGraphView />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

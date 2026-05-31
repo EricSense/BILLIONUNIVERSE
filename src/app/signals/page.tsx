@@ -1,6 +1,11 @@
-import { SignalFeed } from "@/components/signal-feed";
+import { LiveSignalFeed } from "@/components/live-signal-feed";
 import { StatCard } from "@/components/ui/stat-card";
 import { filterSignals, getSignalStats } from "@/lib/data/signals";
+import { Suspense } from "react";
+
+function SignalsFallback() {
+  return <p className="text-sm text-slate-500">Loading signal feed…</p>;
+}
 
 export default function SignalsPage() {
   const stats = getSignalStats();
@@ -20,13 +25,20 @@ export default function SignalsPage() {
       </header>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Active signals" value={stats.total} hint="+3 today" variant="success" />
+        <StatCard
+          label="Active signals"
+          value={stats.total}
+          hint={`${stats.liveCount ?? 0} live overlay`}
+          variant="success"
+        />
         <StatCard label="Cross-system anomalies" value={stats.anomalies} hint="Intersection layer" />
         <StatCard label="Critical severity" value={stats.critical} hint="Requires attention" variant="alert" />
         <StatCard label="Avg. confidence" value={`${stats.avgConfidence}%`} hint="AI synthesis" />
       </div>
 
-      <SignalFeed initialSignals={signals} />
+      <Suspense fallback={<SignalsFallback />}>
+        <LiveSignalFeed initialSignals={signals} />
+      </Suspense>
     </div>
   );
 }

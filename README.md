@@ -1,17 +1,25 @@
 # Billion Universe
 
-**Multi-system intelligence platform** — maps how complex systems interact across macro economy, supply chain, energy, political, and technology systems.
+**Multi-system intelligence platform** — maps how complex systems interact.
 
-## Product (not a landing page)
+## Product features
 
 | Route | Feature |
 |-------|---------|
-| `/signals` | **MVP 1** — Cross-system signal feed with cascade analysis |
-| `/signals/[id]` | Signal detail + system graph |
-| `/scenarios` | **MVP 2 beta** — Parallel scenario simulation engine |
-| `/graph` | System intersection graph + coupling strengths |
-| `/api/signals` | Signals API with filters |
-| `/api/scenarios/simulate` | Scenario simulation API |
+| `/signals` | Live cross-system feed with polling, filters, cascade analysis |
+| `/signals/[id]` | Signal detail + graph + link to scenario engine |
+| `/scenarios` | Parallel scenario branches — save & reload scenarios |
+| `/graph` | Interactive system graph — click nodes to filter signals |
+| `/watchlists` | Alert rules on system intersections |
+| `/sources` | Data connector health & ingestion status |
+
+## APIs
+
+- `GET /api/signals` — filtered signals + live overlay
+- `GET /api/signals/[id]`
+- `GET /api/systems`
+- `GET /api/sources`
+- `POST /api/scenarios/simulate`
 
 ## Development
 
@@ -20,26 +28,20 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 (redirects to `/signals`).
-
 ## Deploy
 
-Connected to [GitHub](https://github.com/EricSense/BillionUniverse) and [Vercel](https://billion-universe.vercel.app). Push to `main` to deploy.
+- **GitHub:** https://github.com/EricSense/BillionUniverse
+- **Production:** https://billion-universe.vercel.app
 
 ## Architecture
 
 ```
 src/
-├── app/              # Next.js App Router pages + API
-├── components/       # UI: signal feed, scenario simulator, graph
+├── app/           # Pages + API routes
+├── components/    # Product UI
 └── lib/
-    ├── data/         # Systems, signals (swap for DB later)
-    ├── scenario-engine.ts
-    └── types.ts
+    ├── data/      # Signals, systems, sources, live overlay
+    ├── alerts/    # Watchlist evaluation engine
+    ├── storage/   # Client persistence (watchlists, scenarios)
+    └── scenario-engine.ts
 ```
-
-## Roadmap
-
-1. **Signals** — Live data ingestion, watchlists, alerts *(in progress)*
-2. **Scenarios** — LLM-backed cascade modeling, saved scenarios
-3. **Graph** — Real-time knowledge graph, team collaboration

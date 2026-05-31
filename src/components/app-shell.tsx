@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertBell } from "@/components/alert-bell";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -7,6 +8,8 @@ const NAV = [
   { href: "/signals", label: "Signals", desc: "Cross-system feed" },
   { href: "/scenarios", label: "Scenarios", desc: "Parallel modeling" },
   { href: "/graph", label: "System Graph", desc: "Intersection map" },
+  { href: "/watchlists", label: "Watchlists", desc: "Alerts & rules" },
+  { href: "/sources", label: "Sources", desc: "Data ingestion" },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -27,9 +30,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 p-3">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {NAV.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const active =
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}
@@ -50,18 +54,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="border-t border-white/10 p-4">
           <div className="rounded-lg border border-accent/20 bg-accent/5 p-3">
             <div className="font-mono text-[10px] uppercase tracking-wider text-accent-bright">
-              MVP 1 Active
+              Product · v0.2
             </div>
             <p className="mt-1 text-xs text-slate-400">
-              Signal dashboard · Scenario engine beta · Live graph
+              Live feeds · Watchlists · Scenario engine
             </p>
           </div>
         </div>
       </aside>
 
-      <main className="ml-56 flex-1">
-        <div className="mx-auto max-w-7xl px-6 py-8">{children}</div>
-      </main>
+      <div className="ml-56 flex flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex items-center justify-end border-b border-white/10 bg-surface-deep/80 px-6 py-3 backdrop-blur-xl">
+          <AlertBell />
+        </header>
+        <main className="flex-1">
+          <div className="mx-auto max-w-7xl px-6 py-8">{children}</div>
+        </main>
+      </div>
     </div>
   );
 }
