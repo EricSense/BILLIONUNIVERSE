@@ -1,62 +1,45 @@
 # Billion Universe
 
-**A multi-system intelligence platform that maps how complex systems interact — a world defined by intersecting forces.**
+**Multi-system intelligence platform** — maps how complex systems interact across macro economy, supply chain, energy, political, and technology systems.
 
-Pre-seed · 10 Frameworks · AI × Systems Theory
+## Product (not a landing page)
 
-## What's included
+| Route | Feature |
+|-------|---------|
+| `/signals` | **MVP 1** — Cross-system signal feed with cascade analysis |
+| `/signals/[id]` | Signal detail + system graph |
+| `/scenarios` | **MVP 2 beta** — Parallel scenario simulation engine |
+| `/graph` | System intersection graph + coupling strengths |
+| `/api/signals` | Signals API with filters |
+| `/api/scenarios/simulate` | Scenario simulation API |
 
-| Page | Description |
-|------|-------------|
-| **Landing (`index.html`)** | Full 10-section strategic framework — Why Now, Pain Points, Customers, North Star, Competitive Landscape, Value Prop, Market Size, MVPs, Business Models, Risks |
-| **Dashboard (`dashboard.html`)** | MVP 1 — Multi-System Signal Dashboard with live cross-system signals, system intersection graph, and cascade analysis |
-
-## Quick start
-
-ES modules require a local server. From this directory:
+## Development
 
 ```bash
-# Option 1: Python (built-in)
-python3 -m http.server 8080
-
-# Option 2: Vite (if you have Node.js)
 npm install
 npm run dev
 ```
 
-Then open:
+Open http://localhost:3000 (redirects to `/signals`).
 
-- **Framework:** http://localhost:8080
-- **Dashboard:** http://localhost:8080/dashboard.html
+## Deploy
+
+Connected to [GitHub](https://github.com/EricSense/BillionUniverse) and [Vercel](https://billion-universe.vercel.app). Push to `main` to deploy.
 
 ## Architecture
 
 ```
-Billion Universe/
-├── index.html          # Strategic framework landing page
-├── dashboard.html      # MVP 1 signal dashboard
-├── css/styles.css      # Design system & components
-├── js/
-│   ├── data.js         # All framework content & mock signals
-│   ├── main.js         # Landing page renderer
-│   └── dashboard.js    # Dashboard interactions & graph
-├── package.json        # Vite dev server (optional)
-└── vite.config.js
+src/
+├── app/              # Next.js App Router pages + API
+├── components/       # UI: signal feed, scenario simulator, graph
+└── lib/
+    ├── data/         # Systems, signals (swap for DB later)
+    ├── scenario-engine.ts
+    └── types.ts
 ```
 
-## MVP Roadmap
+## Roadmap
 
-1. **Month 0–4** — Multi-System Signal Dashboard *(active)*
-2. **Month 4–9** — Scenario Simulation Engine (Beta)
-3. **Month 9–18** — Billion Universe Graph Platform
-
-## Founding thesis
-
-> "The moment AI became capable of reasoning across systems — not just within them — the opportunity arrived."
-
-## Business model
-
-- **Primary:** Enterprise SaaS ($30K–$500K ACV)
-- **Secondary:** Intelligence Reports ($5K–$50K)
-- **Growth:** API Access (usage-based)
-- **Long-term:** Data & Intelligence Marketplace
+1. **Signals** — Live data ingestion, watchlists, alerts *(in progress)*
+2. **Scenarios** — LLM-backed cascade modeling, saved scenarios
+3. **Graph** — Real-time knowledge graph, team collaboration
